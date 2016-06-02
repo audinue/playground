@@ -4,6 +4,7 @@
 
 <textarea id="html-textarea"></textarea>
 <textarea id="css-textarea"></textarea>
+<textarea id="js-textarea"></textarea>
 <iframe id="preview-iframe"></iframe>
 
 <script>
@@ -11,7 +12,8 @@
 $('#preview-iframe')
 	.contents()
 	.find('head')
-	.append($('<style/>'));
+	.append($('<style/>'))
+	.append($('<script/>'));
 
 $('#html-textarea')
 	.on('input', function() {
@@ -27,6 +29,14 @@ $('#css-textarea')
 			.contents()
 			.find('style')
 			.html(this.value);
+	});
+
+$('#js-textarea')
+	.on('input', function() {
+		$('#preview-iframe')
+			.contents()
+			.find('script')
+			.replaceWith('<script>' + this.value + '<\/script>');
 	});
 
 </script>
