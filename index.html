@@ -1,6 +1,7 @@
 <title>Playground</title>
 
 <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-storage-api/1.7.5/jquery.storageapi.min.js"></script>
 
 <textarea id="html-textarea"></textarea>
 <textarea id="css-textarea"></textarea>
@@ -20,6 +21,7 @@ function updateHTML() {
 		.contents()
 		.find('body')
 		.html($('#html-textarea').val());
+	$.localStorage.set('html', $('#html-textarea').val());
 }
 
 function updateCSS() {
@@ -27,6 +29,7 @@ function updateCSS() {
 		.contents()
 		.find('style')
 		.html($('#css-textarea').val());
+	$.localStorage.set('css', $('#css-textarea').val());
 }
 
 function updateJS() {
@@ -34,6 +37,7 @@ function updateJS() {
 		.contents()
 		.find('script')
 		.replaceWith('<script>' + $('#js-textarea').val() + '<\/script>');
+	$.localStorage.set('js', $('#js-textarea').val());
 }
 
 $('#html-textarea')
@@ -46,6 +50,9 @@ $('#js-textarea')
 	.on('input', updateJS);
 
 $(function() {
+	$('#html-textarea').val($.localStorage.get('html') || '');
+	$('#css-textarea').val($.localStorage.get('css') || '');
+	$('#js-textarea').val($.localStorage.get('js') || '');
 	updateHTML();
 	updateCSS();
 	updateJS();
