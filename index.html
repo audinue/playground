@@ -1,7 +1,5 @@
 <title>Playground</title>
 
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-storage-api/1.7.5/jquery.storageapi.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/mode-html.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/mode-css.js"></script>
@@ -12,12 +10,11 @@
 <div id="css-editor"></div>
 <div id="js-editor"></div>
 
-<textarea id="css-textarea"></textarea>
-<textarea id="js-textarea"></textarea>
-<iframe id="preview-iframe"></iframe>
+<iframe id="preview"></iframe>
 
 <style>
-#html-editor {
+#html-editor, #css-editor, #js-editor {
+	display: inline-block;
 	width: 300px;
 	height: 200px;
 }
@@ -25,54 +22,81 @@
 
 <script>
 
-$('#preview-iframe')
-	.contents()
-	.find('head')
-	.append($('<style/>'))
-	.append($('<script/>'));
-
-function updateCSS() {
-	$('#preview-iframe')
-		.contents()
-		.find('style')
-		.html($('#css-textarea').val());
-	$.localStorage.set('css', $('#css-textarea').val());
+function setupPreview() {
+	var p = document.querySelector('#preview');
+	var d = p.contentDocument;
+	d.head.appendChild(d.createElement('style'));
+	d.head.appendChild(d.createElement('script'));
 }
 
-function updateJS() {
-	var oldScript = $('#preview-iframe')
-		.contents()
-		.find('script')
-		.get(0);
-	var newScript = $('#preview-iframe')
-		.get(0)
-		.contentDocument
-		.createElement('script');
-	newScript.textContent = $('#js-textarea').val();
-	oldScript
-		.parentNode
-		.replaceChild(newScript, oldScript);
-	$.localStorage.set('js', $('#js-textarea').val());
+function createEditor(id) {
+	var e = ace.edit(id);
+	e.$blockScrolling = Infinity;
+	e.setTheme('ace/theme/github');
+	var s = e.getSession();
+	s.setTabSize(2);
+	return e;
 }
 
-$('#css-textarea')
-	.on('input', updateCSS);
-
-$('#js-textarea')
-	.on('input', updateJS);
-
-$(function() {
-	var htmlEditor = ace.edit('html-editor');
-	htmlEditor.setTheme("ace/theme/github");
-	var htmlSession = htmlEditor.getSession();
-	htmlSession.setMode("ace/mode/html");
-	htmlSession.setValue(localStorage.getItem('html') || '');
-	htmlSession.on('change', function() {
-		$('#preview-iframe')
-			.contents()
-			.find('body')
-			.html(htmlSession.getValue());
-		localStorage.setItem('html', htmlSession.getValue());
+function setupHTML() {
+	var e = createEditor('html-editor');
+	var s = e.getSession();
+	s.setMode('ace/mode/html');
+	s.setValue(localStorage.getItem('html') || '');
+	var u = function() {
+		return document.querySelector('#preview').contentDocument.body.innerHTML = s.getValue();
+	};
+	s.on('change', function() {
+		localStorage.setItem(
+			'html',
+			u()
+		);
 	});
-});
+	u();
+}
+
+function setupCSS() {
+	var e = createEditor('css-editor');
+	var s = e.getSession();
+	s.setMode('ace/mode/css');
+	s.setValue(localStorage.getItem('css') || '');
+	var u = function() {
+		return document.querySelector('#preview').contentDocument.querySelector('style').textContent = s.getValue();
+	};
+	s.on('change', function() {
+		localStorage.setItem(
+			'css',
+			u()
+		);
+	});
+	u();
+}
+
+function setupJS() {
+	var e = createEditor('js-editor');
+	var s = e.getSession();
+	s.setMode('ace/mode/javascript');
+	s.setValue(localStorage.getItem('js') || '');
+	var u = function() {
+		var d = document.querySelector('#preview').contentDocument;
+		var o = d.querySelector('script');
+		var n = d.createElement('script');
+		n.textContent = s.getValue();
+		o.parentNode.replaceChild(n, o);
+		return n.textContent;
+	};
+	s.on('change', function() {
+		localStorage.setItem(
+			'js',
+			u()
+		);
+	});
+	u();
+}
+
+setupPreview();
+setupHTML();
+setupCSS();
+setupJS();
+
 </script>
