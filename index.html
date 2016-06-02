@@ -1,6 +1,6 @@
 <title>Playground</title>
 
-<script src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 
 <textarea id="html-textarea"></textarea>
 <textarea id="css-textarea"></textarea>
@@ -15,28 +15,39 @@ $('#preview-iframe')
 	.append($('<style/>'))
 	.append($('<script/>'));
 
+function updateHTML() {
+	$('#preview-iframe')
+		.contents()
+		.find('body')
+		.html($('#html-textarea').val());
+}
+
+function updateCSS() {
+	$('#preview-iframe')
+		.contents()
+		.find('style')
+		.html($('#css-textarea').val());
+}
+
+function updateJS() {
+	$('#preview-iframe')
+		.contents()
+		.find('script')
+		.replaceWith('<script>' + $('#js-textarea').val() + '<\/script>');
+}
+
 $('#html-textarea')
-	.on('input', function() {
-		$('#preview-iframe')
-			.contents()
-			.find('body')
-			.html(this.value);
-	});
+	.on('input', updateHTML);
 
 $('#css-textarea')
-	.on('input', function() {
-		$('#preview-iframe')
-			.contents()
-			.find('style')
-			.html(this.value);
-	});
+	.on('input', updateCSS);
 
 $('#js-textarea')
-	.on('input', function() {
-		$('#preview-iframe')
-			.contents()
-			.find('script')
-			.replaceWith('<script>' + this.value + '<\/script>');
-	});
+	.on('input', updateJS);
 
+$(function() {
+	updateHTML();
+	updateCSS();
+	updateJS();
+});
 </script>
