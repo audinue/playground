@@ -1,0 +1,19 @@
+{
+  "name": "playground",
+  "version": "0.1.0",
+  "description": "Local HTML, CSS, JavaScript playground.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/audinue/playground.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/audinue/playground/issues"
+  },
+  "homepage": "https://github.com/audinue/playground#readme"
+}

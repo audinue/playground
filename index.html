@@ -1,0 +1,16 @@
+<title>Playground</title>
+
+<script src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+<textarea id="html-textarea"></textarea>
+<iframe id="preview-iframe"></iframe>
+
+<script>
+$('#html-textarea')
+	.on('input', function() {
+		$('#preview-iframe')
+			.contents()
+			.find('body')
+			.html(this.value);
+	});
+</script>
