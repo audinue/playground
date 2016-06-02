@@ -1,12 +1,27 @@
 <title>Playground</title>
 
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-storage-api/1.7.5/jquery.storageapi.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-storage-api/1.7.5/jquery.storageapi.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/mode-html.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/mode-css.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/mode-javascript.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/theme-github.js"></script>
 
-<textarea id="html-textarea"></textarea>
+<div id="html-editor"></div>
+<div id="css-editor"></div>
+<div id="js-editor"></div>
+
 <textarea id="css-textarea"></textarea>
 <textarea id="js-textarea"></textarea>
 <iframe id="preview-iframe"></iframe>
+
+<style>
+#html-editor {
+	width: 300px;
+	height: 200px;
+}
+</style>
 
 <script>
 
@@ -15,14 +30,6 @@ $('#preview-iframe')
 	.find('head')
 	.append($('<style/>'))
 	.append($('<script/>'));
-
-function updateHTML() {
-	$('#preview-iframe')
-		.contents()
-		.find('body')
-		.html($('#html-textarea').val());
-	$.localStorage.set('html', $('#html-textarea').val());
-}
 
 function updateCSS() {
 	$('#preview-iframe')
@@ -48,9 +55,6 @@ function updateJS() {
 	$.localStorage.set('js', $('#js-textarea').val());
 }
 
-$('#html-textarea')
-	.on('input', updateHTML);
-
 $('#css-textarea')
 	.on('input', updateCSS);
 
@@ -58,11 +62,17 @@ $('#js-textarea')
 	.on('input', updateJS);
 
 $(function() {
-	$('#html-textarea').val($.localStorage.get('html') || '');
-	$('#css-textarea').val($.localStorage.get('css') || '');
-	$('#js-textarea').val($.localStorage.get('js') || '');
-	updateHTML();
-	updateCSS();
-	updateJS();
+	var htmlEditor = ace.edit('html-editor');
+	htmlEditor.setTheme("ace/theme/github");
+	var htmlSession = htmlEditor.getSession();
+	htmlSession.setMode("ace/mode/html");
+	htmlSession.setValue(localStorage.getItem('html') || '');
+	htmlSession.on('change', function() {
+		$('#preview-iframe')
+			.contents()
+			.find('body')
+			.html(htmlSession.getValue());
+		localStorage.setItem('html', htmlSession.getValue());
+	});
 });
 </script>
