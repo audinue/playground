@@ -1,6 +1,6 @@
 <title>Playground</title>
 
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-storage-api/1.7.5/jquery.storageapi.min.js"></script>
 
 <textarea id="html-textarea"></textarea>
@@ -33,10 +33,18 @@ function updateCSS() {
 }
 
 function updateJS() {
-	$('#preview-iframe')
+	var oldScript = $('#preview-iframe')
 		.contents()
 		.find('script')
-		.replaceWith('<script>' + $('#js-textarea').val() + '<\/script>');
+		.get(0);
+	var newScript = $('#preview-iframe')
+		.get(0)
+		.contentDocument
+		.createElement('script');
+	newScript.textContent = $('#js-textarea').val();
+	oldScript
+		.parentNode
+		.replaceChild(newScript, oldScript);
 	$.localStorage.set('js', $('#js-textarea').val());
 }
 
